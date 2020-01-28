@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const jobs = require('../controllers/jobs')
 
-router.route('/jobs')
+router.route('/jobs/:title/:location')
   .get(jobs.index)
   //.post(secureRoute, cigars.create)
 

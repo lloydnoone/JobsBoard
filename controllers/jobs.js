@@ -3,21 +3,30 @@ const axios = require('axios')
 
 //INDEX
 function index(req, res) {
-  
+
   const jobsData = {
     adzuna: {},
     github: {},
     reed: {}
   }
 
-  axios.get(`http://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${process.env.AZID}&app_key=${process.env.AZKEY}&results_per_page=20&what=javascript%20developer&where=london&content-type=application/json`)
-    .then(jobs => {
-      res.status(200).send(jobs.data)
+  axios.all([
+    axios.get(`http://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${process.env.AZID}&app_key=${process.env.AZKEY}&results_per_page=20&what=${req.params.title}&where=${req.params.location}&content-type=application/json`), //what=javascript%20developer need to regex this
+    axios.get(`https://jobs.github.com/positions.json?description=${req.params.title}&location=${req.params.location}`), //&location=new+york need to regex this
+    axios.get(`https://www.reed.co.uk/api/1.0/search?keywords=${req.params.title}&locationName=${req.params.location}`, {
+      withCredentials: true,
+      auth: {
+        username: process.env.REEDUSER,
+        password: ''
+      }
     })
-    .catch(err => {
-      
-      res.status(400).json(err)
-    })
+  ])
+    .then(axios.spread((adzunaRes, githubRes, reedRes) => {
+      jobsData.adzuna = adzunaRes.data
+      jobsData.github = githubRes.data
+      jobsData.reed = reedRes.data
+      res.status(200).send(jobsData)
+    }))
   // Cigar
   //   .find()
   //   .populate('user')
