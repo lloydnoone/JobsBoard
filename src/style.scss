@@ -92,6 +92,7 @@ a {
     }
     .details {
       transition: all 1s ease;
+      overflow: hidden;
       max-height: 0;
     }
     .detailsOpen {

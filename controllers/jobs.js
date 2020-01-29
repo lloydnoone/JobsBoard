@@ -3,13 +3,6 @@ const axios = require('axios')
 
 //INDEX
 function index(req, res) {
-
-  const jobsData = {
-    adzuna: {},
-    github: {},
-    reed: {}
-  }
-
   axios.all([
     axios.get(`http://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${process.env.AZID}&app_key=${process.env.AZKEY}&results_per_page=20&what=${req.params.title}&where=${req.params.location}&content-type=application/json`), //what=javascript%20developer need to regex this
     axios.get(`https://jobs.github.com/positions.json?description=${req.params.title}&location=${req.params.location}`), //&location=new+york need to regex this
@@ -22,11 +15,58 @@ function index(req, res) {
     })
   ])
     .then(axios.spread((adzunaRes, githubRes, reedRes) => {
-      jobsData.adzuna = adzunaRes.data
-      jobsData.github = githubRes.data
-      jobsData.reed = reedRes.data
+      //map over results array
+      const adzunaData = adzunaRes.data.results.map(job => {
+        //for each job, get title
+        return ({
+          id: job.id,
+          title: job.title,
+          location: job.location.display_name,
+          company: job.company.display_name,
+          minSalary: job.salary_min,
+          maxSalary: job.salary_max,
+          description: job.description
+        })
+      })
+
+      const githubData = githubRes.data.map(job => {
+        return ({
+          id: job.id,
+          title: job.title,
+          location: job.location,
+          company: job.company,
+          minSalary: 'not',
+          maxSalary: 'specified',
+          description: job.description
+        })
+      })
+
+      const reedData = reedRes.data.results.map(job => {
+        return ({
+          id: job.jobId,
+          title: job.jobTitle,
+          locationName: job.location,
+          company: job.employerName,
+          minSalary: job.minimumSalary,
+          maxSalary: job.maximumSalary,
+          description: job.jobDescription
+        })
+      })
+      const jobsArray = [ ...adzunaData, ...githubData, ...reedData ]
+      const jobsData = { jobsArray }
+
+      // const jobsData = {
+      //   adzuna: null,
+      //   github: null,
+      //   reed: null
+      // }
+
+      // jobsData.adzuna = adzunaRes.data
+      // jobsData.github = githubRes.data
+      // jobsData.reed = reedRes.data
       res.status(200).send(jobsData)
     }))
+    .catch(err => res.status(400).json(err))
   // Cigar
   //   .find()
   //   .populate('user')

@@ -39,7 +39,6 @@ class App extends Component {
   render() {
     if (!this.state.jobs) return null
     console.log(this.state.jobs)
-    const { adzuna, github, reed } = this.state.jobs
     return (
       <div className='App'>
         <SearchBar 
@@ -48,9 +47,7 @@ class App extends Component {
           submitSearch={this.submitSearch}
         />
         <Listings 
-          adzuna={adzuna}
-          github={github}
-          reed={reed}
+          jobs={this.state.jobs}
         />
       </div>
     )
