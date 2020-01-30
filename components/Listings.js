@@ -1,38 +1,48 @@
 import React from 'react'
 
-import AdzunaListings from './AdzunaListings'
-import GithubListings from './GithubListings'
-import ReedListings from './ReedListings'
-
+import Listing from './Listing'
 
 class Listings extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      detailsDisplay: true
+      detailsDisplay: true,
+      jobIds: []
     }
+    this.saveId = this.saveId.bind(this)
+  }
+
+  componentDidMount() {
+    const jobIds = JSON.parse(localStorage.getItem('jobIds')) || []
+    this.setState({ jobIds: [...jobIds] })
+  }
+
+  saveId(jobId) {
+    const jobIds = JSON.parse(localStorage.getItem('jobIds')) || []
+    this.setState({ jobIds: [...jobIds, jobId] })
+    localStorage.setItem('jobIds', JSON.stringify([...jobIds, jobId]))
   }
 
   render() {
-    console.log(this.props.jobs)
     return (
       <div className="listings">
-        {this.props.jobs.jobsArray.map(job => {
-          return (
-            <div key={job.id} className='listing'>
-              <h2>Job Title: {job.title}</h2>
-              <p>Location: {job.location}</p>
-              <p>Company: {job.company}</p>
-              <div className={`details ${this.state.detailsDisplay ? 'detailsOpen' : ''}`}>
-                <p>Salary: {job.minSalary} - {job.maxSalary}</p>
-                <h3>Description: </h3>
-                <p>{job.description}</p>
-                <a><button className='button'>Apply</button></a>
-              </div>
-            </div>
-          )
-        })}
+        {this.props.jobs.jobsArray
+          .filter((job) => {
+            if (!this.props.minSalary && !this.props.maxSalary) return true
+            if (job.minSalary >= parseInt(this.props.minSalary) && !this.props.maxSalary) return true
+            if (job.maxSalary <= parseInt(this.props.maxSalary) && !this.props.minSalary) return true
+            return job.minSalary >= parseInt(this.props.minSalary) && job.maxSalary <= parseInt(this.props.maxSalary)
+          })
+          .map(job => {
+            return <Listing 
+              key={job.id} 
+              job={job} 
+              applied={this.state.jobIds.includes(job.id)}
+              saveId={this.saveId}
+            />
+          })
+        }
       </div>
     )
   }

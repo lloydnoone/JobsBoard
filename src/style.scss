@@ -30,6 +30,10 @@ a {
   text-align: left;
 }
 
+.applied {
+  background-color: green;
+}
+
 .button:hover {
   background: $hoverBlue;
 }
@@ -74,12 +78,18 @@ a {
   input {
     margin: 0 20px;
   }
+  .salaryInput {
+    width: 100px;
+    margin: 10px 5px 0px 0px;
+    outline: none;
+  }
 }
 
 .listings {
   display: flex;
   flex-direction: column;
-  margin: 25px;
+  margin: 25px auto;
+  max-width: 800px;
   .listing {
     height: 100%;
     margin: 0;

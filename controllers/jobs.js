@@ -25,7 +25,8 @@ function index(req, res) {
           company: job.company.display_name,
           minSalary: job.salary_min,
           maxSalary: job.salary_max,
-          description: job.description
+          description: job.description,
+          url: job.redirect_url 
         })
       })
 
@@ -37,7 +38,8 @@ function index(req, res) {
           company: job.company,
           minSalary: 'not',
           maxSalary: 'specified',
-          description: job.description
+          description: job.description,
+          url: job.company_url
         })
       })
 
@@ -45,25 +47,16 @@ function index(req, res) {
         return ({
           id: job.jobId,
           title: job.jobTitle,
-          locationName: job.location,
+          location: job.locationName,
           company: job.employerName,
           minSalary: job.minimumSalary,
           maxSalary: job.maximumSalary,
-          description: job.jobDescription
+          description: job.jobDescription,
+          url: job.jobUrl
         })
       })
       const jobsArray = [ ...adzunaData, ...githubData, ...reedData ]
       const jobsData = { jobsArray }
-
-      // const jobsData = {
-      //   adzuna: null,
-      //   github: null,
-      //   reed: null
-      // }
-
-      // jobsData.adzuna = adzunaRes.data
-      // jobsData.github = githubRes.data
-      // jobsData.reed = reedRes.data
       res.status(200).send(jobsData)
     }))
     .catch(err => res.status(400).json(err))

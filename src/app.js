@@ -14,8 +14,12 @@ class App extends Component {
     this.state = {
       jobs: null,
       title: 'Javascript',
-      location: 'London'
+      location: 'London',
+      minSalary: null,
+      maxSalary: null,
+      savedJobs: []
     }
+
     this.handleChange = this.handleChange.bind(this)
     this.submitSearch = this.submitSearch.bind(this)
   }
@@ -38,7 +42,7 @@ class App extends Component {
 
   render() {
     if (!this.state.jobs) return null
-    console.log(this.state.jobs)
+    console.log(this.state)
     return (
       <div className='App'>
         <SearchBar 
@@ -48,6 +52,8 @@ class App extends Component {
         />
         <Listings 
           jobs={this.state.jobs}
+          minSalary={this.state.minSalary}
+          maxSalary={this.state.maxSalary}
         />
       </div>
     )
