@@ -2,7 +2,7 @@
 
 The idea for this was to bring together multiple jobs board APIs together and make a simple user interface to show the data from each of them. Didnt have a whole lot of time because 2 other code tests came up in that timeframe.
 
-The user can filter for job title, location, and min and max salary.
+The user can filter for job title, location, and min and max salary. It keeps track of what jobs the user chose to apply.
 
 It uses express on the backend and react on the front. I chose not to use a database for this and just relied on local storage for data persistence. If i was to spend mpre time on this i would add user auth and and of course use a database.
 
